@@ -53,7 +53,6 @@ subcluster = st.selectbox(label = 'Select subcluster',
 if subcluster!='Any':
     attributes = attributes.loc[attributes['Subcluster Number']==subcluster]
     flag_proteins = attributes.loc[attributes['Subcluster Number']==subcluster].index
-    # subcluster_df = subcluster_df.loc[subcluster_df['Subcluster Number']==subcluster]
 
 st.write('')
 st.subheader('Identify High Frequency Protein Families')
@@ -82,7 +81,6 @@ for flag in flag_proteins:
     filtered_neighbors = pd.concat([filtered_neighbors, flag_neighbors], axis=0)
     for neighbor in flag_neighbors['family_desc'].unique():
         count_neighbors[neighbor] = count_neighbors[neighbor]+1 if neighbor in count_neighbors.keys() else 1
-
 neighbor_list = filtered_neighbors.groupby(['taxon_id', 'num', 'gene_key'])['family_desc'].apply(list).reset_index(name="family_desc")
 
 NUM_PRIMARY = 3
@@ -93,30 +91,27 @@ for neighbor in top_neighbors.keys():
     neighbor_list[neighbor+'_presence'] = neighbor_list.apply(lambda x: neighbor in x['family_desc'], axis=1)
     temp = neighbor_list.loc[neighbor_list[neighbor+'_presence']].explode('family_desc')
     temp_secondary = temp['family_desc'].value_counts(ascending=False).reset_index(name=neighbor).iloc[:NUM_SECONDARY,:]
+    temp_secondary.rename(columns={'family_desc':'index'},inplace=True)
     # count_secondaryneighbors = pd.concat([count_secondaryneighbors, temp_secondary[neighbor]], axis=1)
     count_secondaryneighbors = pd.merge(count_secondaryneighbors, temp_secondary, how="outer", on='index')
     # count_secondaryneighbors = count_secondaryneighbors.join(temp_secondary)
 count_secondaryneighbors = count_secondaryneighbors.rename(columns={'index':'pair'}).set_index('pair')
 neighbor_list.reset_index(drop=True, inplace=True)
 
-st.dataframe(count_secondaryneighbors, use_container_width=True, height=300)
+st.dataframe(count_secondaryneighbors, use_container_width=True)
+st.write('')
 
+st.subheader('Select pair from high frequency protein family table')
 primary = st.selectbox('Select primary protein to evaluate', top_neighbors.keys())
-secondary = st.selectbox('Select secondary protein to evaluate', count_secondaryneighbors.sort_values(by=primary, ascending=False).index[:10])
+secondary = st.selectbox('Select secondary protein to evaluate', [sec_neighbor for sec_neighbor in count_secondaryneighbors.sort_values(by=primary, ascending=False).index[:NUM_SECONDARY] if sec_neighbor!=primary])
 
 neighbor_list[secondary+'_presence'] = neighbor_list.apply(lambda x: secondary in x['family_desc'], axis=1)
 
-
-## ADD AVERAGE DISTANCE FOR EACH WITH ABSOLUTE VALUE
-
-# st.write(neighbor_list.head())
-
 pair_df = neighbor_list.loc[(neighbor_list[primary+'_presence']==True)&(neighbor_list[secondary+'_presence']==True)]
-st.write(pair_df)
 
+st.write('')
+st.write('')
 for sequence in pair_df.index:
-    # st.write(sequence)
-    
     taxon = pair_df.loc[sequence, 'taxon_id']
     flag_num = pair_df.loc[sequence, 'num']
     gene_key = pair_df.loc[sequence, 'gene_key']
@@ -136,18 +131,15 @@ for sequence in pair_df.index:
     proteins['direction'] = proteins['direction'].apply(lambda x: 'up' if x=='normal' else 'down')
     proteins.sort_values('num', inplace=True)
     proteins.reset_index(drop=True, inplace=True)
-    
-    
+        
     # TODO: check why some EamA aren't categorized as transporter
     
-
     # TODO: sort by organism name
     
     # TODO: extract chunk and find frequency of pathways
     
     # TODO: color primary and secondary throughout the app
-    
-    st.write(proteins)
+ 
     st.write('')
     col1, col2 = st.columns([1,3])
     with col1:
@@ -175,8 +167,8 @@ for sequence in pair_df.index:
                     text=temp_proteins['family_desc'], #.apply(lambda x: (str(x['family_desc'])+', type:'+str(x['type'])) if x['type']!=None else x['family_desc'], axis=1),
                     textposition="middle right"
                 ))
-        fig.update_xaxes(showgrid=False, zeroline=False, showticklabels=False)
-        fig.update_yaxes(showgrid=False, zeroline=True, showticklabels=False)
+        fig.update_xaxes(showgrid=False, zeroline=True, showticklabels=False)
+        fig.update_yaxes(showgrid=False, zeroline=False, showticklabels=False)
         fig.update_layout(xaxis_range=[-1,5])
         fig.update_layout(
             margin=dict(l=0, r=0, t=0, b=0),
