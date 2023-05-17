@@ -11,8 +11,10 @@ st.write('')
 st.write('This page provides a deep-dive into a single SSN subcluster. Review which protein families occur with the highest frequency. Use the filter to explore subclusters with the identified protein families.')
 
 subcluster_df = pd.read_csv('./data/subclusters.csv')
+subcluster_df['SSN Cluster Number'] = subcluster_df['SSN Cluster Number'].astype(int)
+subcluster_df['Subcluster Number'] = subcluster_df['Subcluster Number'].astype(int)
 
-SSN = st.selectbox('Select cluster to evaluate', range(1,5+1,1), index=3)
+SSN = st.selectbox('Select cluster to evaluate', sorted([int(x) for x in subcluster_df['SSN Cluster Number'].unique() if x>0]), index=3)
 df = subcluster_df.loc[subcluster_df['SSN Cluster Number']==SSN]
 st.write('')
 
