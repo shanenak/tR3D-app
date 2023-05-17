@@ -90,6 +90,7 @@ count_secondaryneighbors = pd.DataFrame(columns=['index'])
 for neighbor in top_neighbors.keys():
     neighbor_list[neighbor+'_presence'] = neighbor_list.apply(lambda x: neighbor in x['family_desc'], axis=1)
     temp = neighbor_list.loc[neighbor_list[neighbor+'_presence']].explode('family_desc')
+    total_num = len(temp.index)
     temp_secondary = temp['family_desc'].value_counts(ascending=False).reset_index(name=neighbor).iloc[:NUM_SECONDARY,:]
     temp_secondary.rename(columns={'family_desc':'index'},inplace=True)
     # count_secondaryneighbors = pd.concat([count_secondaryneighbors, temp_secondary[neighbor]], axis=1)
