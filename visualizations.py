@@ -9,6 +9,7 @@ def get_data():
     
 
 def make_bar(subset_df: pd.DataFrame()):
+    ### main repeated graph on clusters page
     fig = go.Figure()
     fig.add_trace(
         go.Bar(
@@ -33,11 +34,23 @@ def make_bar(subset_df: pd.DataFrame()):
         yaxis = dict(
             title = 'Neighboring Protein Families',
             tickvals = subset_df['Pfam Description'],
-            ticktext = subset_df['Pfam Description'].str[:30]
+            ticktext = subset_df['Pfam Description'].str[:30],
+            ### update here to change axes tick labels (size, font)
+            tickfont = dict(
+                family="Arial",
+                size=18,
+                color="black"
+            )
         ),
         # margin=dict(l=20, r=30, t=20, b=20),
         height = 400,
         # width = 1200,
+        ### update here to change labels inside graph (size, font)
+        font=dict(
+            family="Arial",
+            size=18,
+            color="black"
+        )
     )
 
     fig.update_xaxes(range=[0, 1])
