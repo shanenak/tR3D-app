@@ -13,16 +13,17 @@ from visualizations import make_bar, make_summary_bar
 #### 3) In your Terminal console, check if the last line starts with (venv). If so, your virtual environment is already activated. 
 #           If not, copy the below code into the terminal and press Enter.
 #           venv/Scripts/activate
+#           venv\Scripts\activate actually
 #### 4) Run the code by copying the below code into the terminal and pressing Enter. 
 #           Streamlit run app.py
 #### 5) Wait for the browser to open with the local version of your app. 
 #### 6) Re-run the code by saving this file and selecting "Always re-run" in the browser. 
 
-
+#this is v important - 
 def AlaX_app():
-    st.session_state.df = pd.read_csv(r"data/AlaX_10neighbors.csv")
-    
-    df = pd.read_csv(r"data/AlaX_10neighbors.csv")
+    st.session_state.df = pd.read_csv(r"data/220902_IPR018163_Uniref50_43_480max_Cleaned_GNN_Final.csv") #was previously AlaX_10neighbors
+    #reads file, needs to be input twice. But doesn't need to be cleaned?
+    df = pd.read_csv(r"data/220902_IPR018163_Uniref50_43_480max_Cleaned_GNN_Final.csv") #was previously AlaX_10neighbors
     unique_pfam = df.groupby(by='Pfam Description')['Pfam Description'].count()
     # df['Pfam Description'] = df.apply(lambda x: x['Pfam Description']+'-'+str(x.index) if unique_pfam[x['Pfam Description']]>1 else x['Pfam Description'], axis=1)
     st.set_page_config(
@@ -32,13 +33,12 @@ def AlaX_app():
         initial_sidebar_state='auto',
         menu_items={
             'Report a Bug':'mailto:dcmillar@berkeley.edu',
-            'About': '# This work-in-progress app is being developed in collaboration with the Michelle Chang Lab at UC Berkeley.'
+            'About': '# This app is being developed in the lab of Michelle Chang at UC Berkeley.'
         })
     with st.sidebar:
-        st.subheader('tRNA-Deacylase Directed Discovery (tR3D) of Noncanonical Amino Acids')
+        st.subheader('tRNA-Deacylase Directed Discovery (tR3D) of Noncanonical Amino Acids and Enzymes')
         st.caption('AlaX, Interpro Family 18163')
-        st.write('In this app, explore the capability of noncanonical amino acids to be utilized in molecule design, and yield new biocatalysts for future synthetic biology efforts.')
-        st.write('Amino acids are simple building blocks that are privileged starting materials for both small molecule and biomolecule design. As such, amino acid-modifying enzymes are valuable biocatalysts for engineering molecular properties. However, current data-mining is limited to specific enzyme types and similarity-based searches, so rediscovery rates remain an issue. To address this challenge, I have developed a genome mining strategy for the elucidation of novel amino-acid modifying enzymes by taking advantage of a natural mechanism that prevents noncanonical amino acids from entering proteome, tRNA-deacylases.')
+        st.write('This app enables a enzyme family approach for Biosynhetic Gene Cluster (BGC) discovery through efficeint gene neighborhood analysis.')
         st.markdown("Contact [Douglas Millar PhD](mailto:dcmillar@berkeley.edu) to learn more.")
         
     # st.title('tRNA-Deacylase Directed Discovery (tR3D) of Noncanonical Amino Acids')
@@ -47,7 +47,7 @@ def AlaX_app():
     st.write('')
     st.header('Overview of all SSN Clusters')
     st.write('')
-    st.write('This page provides a summary of all SSN Clusters. Review which protein families occur with the highest frequency. Use the filter to explore clusters with the identified protein families. Once a cluster of interest has been specified, review it in more detail in the following page.')
+    st.write('This page provides a summary of all SSN Clusters. Review which protein families occur with the highest frequency. Use the filter to explore clusters with the identified protein families.')
     # st.markdown("[Identify High Frequency Protein Families](#high-frequency-protein-families)")
     # st.markdown("[Explore Co-occurrence in Clusters](#explore-co-occurrence-in-cluster)")
 
@@ -57,6 +57,7 @@ def AlaX_app():
     summary_fig = make_summary_bar(df)
     st.plotly_chart(summary_fig)
     
+    #what is this line for? 
     st.write('')
     
     st.subheader('Explore Co-occurrence in Clusters')

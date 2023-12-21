@@ -3,11 +3,11 @@ import plotly.graph_objects as go
 import pandas as pd
 import streamlit as st
 
-def get_data():
-    st.session_state.df = pd.read_csv(r"data/AlaX_cleaned_data.csv")
-    st.session_state.attributes = pd.read_csv('./data/attributes.csv')
+# def get_data():
+#     st.session_state.df = pd.read_csv(r"data/AlaX_cleaned_data.csv")
+#     st.session_state.attributes = pd.read_csv('./data/attributes.csv')
     
-
+# This is for every cluster figure
 def make_bar(subset_df: pd.DataFrame()):
     ### main repeated graph on clusters page
     fig = go.Figure()
@@ -15,8 +15,6 @@ def make_bar(subset_df: pd.DataFrame()):
         go.Bar(
             x=subset_df['Co-occurrence'],
             y=subset_df['Pfam Description'], 
-            # hovertext=subset_df['# of Queries with Pfam Neighbors'],
-            # hoverinfo="text",
             customdata=subset_df,
             hovertemplate='<b> %{y}</b><br># of queries with Pfam neighbors: %{customdata[1]: .2f}<extra></extra>',
             orientation='h',
@@ -29,16 +27,26 @@ def make_bar(subset_df: pd.DataFrame()):
         title="Co-occurrences for Cluster "+str(subset_df['SSN Cluster Number'].iloc[0]),
         xaxis = dict(
             title = 'Co-occurrence',
+            titlefont=dict(
+                size=18,
+                color="black"
+            ),
             tickformat = '.0%',
+            tickfont = dict(
+                color="black"
+            )
         ),
         yaxis = dict(
             title = 'Neighboring Protein Families',
+            titlefont=dict(
+                size=18,
+                color="black"
+            ),
             tickvals = subset_df['Pfam Description'],
             ticktext = subset_df['Pfam Description'].str[:30],
             ### update here to change axes tick labels (size, font)
             tickfont = dict(
-                family="Arial",
-                size=18,
+                size=15,
                 color="black"
             )
         ),
@@ -47,7 +55,6 @@ def make_bar(subset_df: pd.DataFrame()):
         # width = 1200,
         ### update here to change labels inside graph (size, font)
         font=dict(
-            family="Arial",
             size=18,
             color="black"
         )
@@ -56,10 +63,11 @@ def make_bar(subset_df: pd.DataFrame()):
     fig.update_xaxes(range=[0, 1])
     return fig
 
+#This is figure at the top of the website
 def make_summary_bar(df: pd.DataFrame()):
     fig = go.Figure()
     
-    pfam_df = df.loc[df['Pfam Description']!='none'].groupby(['Pfam Description'])['# of Queries with Pfam Neighbors'].count().sort_values(ascending=False).iloc[0:15].sort_values(ascending=True).reset_index()
+    pfam_df = df.loc[df['Pfam Description']!='none'].groupby(['Pfam Description'])['# of Queries with Pfam Neighbors'].sum().sort_values(ascending=False).iloc[0:15].sort_values(ascending=True).reset_index()
     pfam_df['average_distance'] = pfam_df.apply(lambda x: df.loc[df['Pfam Description']==x['Pfam Description'], 'Median Distance'].median(),axis=1)
 
     fig.add_trace(
@@ -76,15 +84,34 @@ def make_summary_bar(df: pd.DataFrame()):
             textposition='inside',
             )
     )
+
     fig.update_layout(
         title="Neighboring protein families by number of occurrences in dataset",
-        yaxis = dict(
-            title = 'Number of times referenced in data',
-            tickvals = pfam_df['Pfam Description'],
-            ticktext = pfam_df['Pfam Description'].str[:50]
+        xaxis = dict(
+            title = 'Total Number of Occurrences',
+            titlefont=dict(
+                size=16,
+                color="black"
+            ),
+            tickfont = dict(
+                size=14,
+                color="black"
+            )
         ),
-        xaxis_title="Neighboring Protein Families",
+        yaxis = dict(
+            title = 'Neighboring Protein Families',
+            titlefont=dict(
+                size=16,
+                color="black"
+            ),
+            tickvals = pfam_df['Pfam Description'],
+            ticktext = pfam_df['Pfam Description'].str[:50],
+            tickfont = dict(
+                size=14,
+                color="black"
+            )
+        ),
         height = 500,
-        width = 1200,
+        width = 1000,
     )
     return fig
