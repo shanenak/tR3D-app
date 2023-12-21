@@ -2,14 +2,9 @@
 import plotly.graph_objects as go
 import pandas as pd
 import streamlit as st
-
-# def get_data():
-#     st.session_state.df = pd.read_csv(r"data/AlaX_cleaned_data.csv")
-#     st.session_state.attributes = pd.read_csv('./data/attributes.csv')
     
-# This is for every cluster figure
+# Main Repeated Graph on Clusters Page
 def make_bar(subset_df: pd.DataFrame()):
-    ### main repeated graph on clusters page
     fig = go.Figure()
     fig.add_trace(
         go.Bar(
@@ -44,16 +39,12 @@ def make_bar(subset_df: pd.DataFrame()):
             ),
             tickvals = subset_df['Pfam Description'],
             ticktext = subset_df['Pfam Description'].str[:30],
-            ### update here to change axes tick labels (size, font)
             tickfont = dict(
                 size=15,
                 color="black"
             )
         ),
-        # margin=dict(l=20, r=30, t=20, b=20),
         height = 400,
-        # width = 1200,
-        ### update here to change labels inside graph (size, font)
         font=dict(
             size=18,
             color="black"
@@ -63,7 +54,7 @@ def make_bar(subset_df: pd.DataFrame()):
     fig.update_xaxes(range=[0, 1])
     return fig
 
-#This is figure at the top of the website
+#Summary figure at the top of the page
 def make_summary_bar(df: pd.DataFrame()):
     fig = go.Figure()
     
@@ -74,10 +65,10 @@ def make_summary_bar(df: pd.DataFrame()):
         go.Bar(
             y=pfam_df['Pfam Description'],
             x=pfam_df['# of Queries with Pfam Neighbors'], 
-            # hovertext=subset_df['# of Queries with Pfam Neighbors'],
-            # hoverinfo="text",
-            # customdata=subset_df,
-            # hovertemplate='<b> %{y}</b><br># of queries with Pfam neighbors: %{customdata[1]: .2f}<extra></extra>',
+            hovertext=pfam_df['# of Queries with Pfam Neighbors'],
+            hoverinfo="text",
+            customdata=pfam_df,
+            hovertemplate='<b> %{y}</b><br># of queries with Pfam neighbors: %{customdata[1]: .2f}<extra></extra>',
             orientation='h',
             text = pfam_df['average_distance'],
             texttemplate='%{text:.0s} median distance', 
