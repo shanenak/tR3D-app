@@ -34,11 +34,16 @@
 
 ## 🧐 About <a name = "about"></a>
 
-Write about 1-2 paragraphs describing the purpose of your project.
+Welcome to tR3D! This tool enables the efficient exploration of gene neighborhoods surrounding enzymes of interest, for the goal of Biosynthetic Gene Cluster discovery. This enzyme family-based approach uses data directly from the Enzyme Function Institute (https://efi.igb.illinois.edu/) to identify new biosynthetic pathways and new enzyme functions. 
+
+This tool was developed by Doug Millar at the University of California, Berkeley in the lab of Michelle Chang, with the help of Shannon Millar (B.S. Industrial Engineering, UC-Berkeley). Yes, we're married :D
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See [deployment](#deployment) for notes on how to deploy the project on a live system.
+Start by generating a SSN of your enzyme family of choice, with a sequence alignment cutoff score that separates known enzymes from unknown (to the best of your knowledge). Submit this SSN to the EFI-GNT tool with 10 neighboring genes and 0% co-occurrence cutoff. Upload the Cluster SSN hub node file that is generated to Cytoscape, and download the table. This CSV is directly loaded to tR3D for visualization. That’s pretty much it. Look for high co-occurrences > 75% and low median distances (<5).
+
+A note: If your SSN is very large, the co-occurrences will be very low and lack meaningful information. To address this, you can generate subcluster files through uploading all of the Uniprot IDs from a particular cluster for their own SSN, increase the alignment score, and repeat the process above. This "cluster of cluster" approach allows a deeper dive into clades of enzymes. 
+
 
 ### Prerequisites
 
